@@ -19,6 +19,18 @@ type Food = {
 }
 
 const map: Map<string, Food> = new Map();
+// map.set("Beef Skirt", {
+//     name: "Beef Skirt",
+//     metric: "LB",
+//     cost: 4.79,
+//     servings: 1,
+//     lbsBought: 2,
+//     fats: 1,
+//     carbs: 1,
+//     proteins: 1,
+//     bought: 1,
+//     list: "Calculator"
+// })
 
 // GENERAL CHANGE METHOD
 export const deleteFood = (req: SafeRequest, res: SafeResponse): void => { 
@@ -124,19 +136,20 @@ export const listFoods = (_req: SafeRequest, res: SafeResponse): void => {
     res.send({foodsArr: foods});
 }
 
-// let currDays: number = -1;
-// export const updateDay = (req: SafeRequest, res: SafeResponse): void => {
-//   const day = req.body.day
-//   if (typeof day !== "number") {
-//     res.status(400).send("Day is not a number")
-//     return;
-//   }
-//   currDays = Number(day)
-//   res.send({saved: true})
-// }
-// export const getDay = (_req: SafeRequest, res: SafeResponse): void => {
-//   res.send({day: currDays});
-// }
+let currDays: number = 0;
+export const updateDay = (req: SafeRequest, res: SafeResponse): void => {
+  const day = req.body.day
+  if (typeof day !== "number") {
+    res.status(400).send("Day is not a number")
+    return;
+  }
+  currDays = Number(day)
+  res.send({saved: true})
+}
+
+export const getDay = (_req: SafeRequest, res: SafeResponse): void => {
+  res.send({day: currDays});
+}
 
 // Helper to return the (first) value of the parameter if any was given.
 const first = (param: unknown): string|undefined => {

@@ -5,19 +5,27 @@ type CalculatorProps = {
     onDeleteClick: (food: Food) => void,
     onAddClick: (food: Food) => void,
     onAddFoodPage: () => void,
+    onDayChange: (day: number) => void,
+    day: number,
     foods: Food[]
 }
 
 type CalculatorState = {
     moneyGoal: number,
-    days: number,
-    budget: number
+    budget: number, 
+    day: number
 }
 
 export class Calculator extends Component<CalculatorProps, CalculatorState> {
     constructor(props: CalculatorProps) {
         super(props);
-        this.state = {moneyGoal: 0, days: 1, budget: 0}
+        this.state = {moneyGoal: 0, budget: 0, day: this.props.day}
+    }
+    
+    componentDidUpdate(prevProps: CalculatorProps) {
+        if (prevProps.day !== this.props.day) {
+            this.setState({ day: this.props.day });
+        }
     }
     
     render = (): JSX.Element => {
@@ -42,9 +50,9 @@ export class Calculator extends Component<CalculatorProps, CalculatorState> {
     }
 
     renderSummary = (totalCost: number, totalLbs: number): JSX.Element => {
-        const dailyCost = absMoney(round(totalCost / this.state.days, 2))
-        const totalSurplus = absMoney(round(this.state.budget * this.state.days - totalCost, 2))
-        const daillySurplus = absMoney(round(this.state.budget - totalCost / this.state.days, 2))
+        const dailyCost = absMoney(round(totalCost / this.state.day, 2))
+        const totalSurplus = absMoney(round(this.state.budget * this.state.day - totalCost, 2))
+        const daillySurplus = absMoney(round(this.state.budget - totalCost / this.state.day, 2))
 
         return (
             <div>
@@ -63,7 +71,7 @@ export class Calculator extends Component<CalculatorProps, CalculatorState> {
                                 <th>{absMoney(round(totalCost, 2))}</th>
                                 <th>{dailyCost}</th>
                                 <th>{round(totalLbs, 2)} LBS</th>
-                                <th>{round(totalLbs / this.state.days, 2)} LBS</th>
+                                <th>{round(totalLbs / this.state.day, 2)} LBS</th>
                                 <th>{totalSurplus}</th>
                                 <th>{daillySurplus}</th>
                             </tr>
@@ -78,7 +86,7 @@ export class Calculator extends Component<CalculatorProps, CalculatorState> {
             <div>
                 <h2>Personal Information</h2>
                     <div>
-                        Days planned out: <input type="number" onChange={this.doDayChange} defaultValue={this.state.days} min={1}></input>
+                        Days planned out: <input type="number" onChange={this.doDayChange} value={this.state.day} min={0}></input>
                     </div>
                     <div>
                         Daily Budget: <input type="number" onChange={this.doBudgetChange} defaultValue={this.state.budget} min={0}></input>
@@ -141,7 +149,7 @@ export class Calculator extends Component<CalculatorProps, CalculatorState> {
                                 <th>Total LBS Bought---</th>
                             </tr>
                             {foods}
-                         </tbody>
+                        </tbody>
                     </table>
                     <button type="button" onClick={this.doAddClick}>Add New Food</button>
                     <button type="button" onClick={this.doCheckPropsClick}>Check Props</button>
@@ -166,7 +174,8 @@ export class Calculator extends Component<CalculatorProps, CalculatorState> {
     }
 
     doDayChange = (evt: ChangeEvent<HTMLInputElement>): void => {
-        this.setState({days: Number(evt.target.value)})
+        this.props.onDayChange(Number(evt.target.value))
+        this.setState({day: Number(evt.target.value)})
     }
 
     doBudgetChange = (evt: ChangeEvent<HTMLInputElement>): void => {
